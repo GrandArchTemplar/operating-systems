@@ -31,7 +31,7 @@ int file_copy(const char *instance_path, const char *copy_path)
     return 1;
 }
 
-void run(int argc, char **argv) 
+void simple_mode_run(int argc, char **argv) 
 {
     if (argc < 2) 
     {
@@ -57,5 +57,5 @@ void run(int argc, char **argv)
 
 int main(int argc, char **argv) 
 {
-    run(argc, argv);
+    simple_mode_run(argc, argv);
 }
