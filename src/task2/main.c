@@ -15,7 +15,8 @@ int file_copy(const char *instance_path, const char *copy_path)
     if (access(copy_path, F_OK)) 
     {
         struct stat tmp;
-        const int mode = stat(instance_path, &tmp);
+        stat(instance_path, &tmp);
+        const int mode = tmp.st_mode;
         const int input = open(instance_path, O_RDONLY);
         const int output = open(copy_path, O_CREAT | O_WRONLY, mode);
         const int BUFFER_SIZE = 16384;
@@ -35,7 +36,7 @@ void simple_mode_run(int argc, char **argv)
 {
     if (argc < 2) 
     {
-        printf("%s", "Illegal argument number. Requre at least two arguments!");
+        printf("%s", "Illegal argument number. Require at least two arguments!");
         return;
     }
     int r = file_copy(*(argv + 1), *(argv + 2));
