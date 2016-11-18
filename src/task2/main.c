@@ -38,7 +38,7 @@ void simple_mode_run(int argc, char **argv)
         printf("%s", "Illegal argument number. Requre at least two arguments!");
         return;
     }
-    int r = file_copy(*(argv), *(argv + 1));
+    int r = file_copy(*(argv + 1), *(argv + 2));
     if (r == 0) 
     {
         printf("%s", "File copied succesful!");
@@ -51,7 +51,7 @@ void simple_mode_run(int argc, char **argv)
     }
     if (r == 1) 
     {
-        printf("%s %s", *(argv + 1), " has already existed!");
+        printf("%s %s", *(argv + 2), " has already existed!");
     }
 }
 
