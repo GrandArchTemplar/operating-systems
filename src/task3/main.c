@@ -2,53 +2,126 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<sys/types.h>
+#include<sys/stat.h>
+#include<fcntl.h>
 #include<unistd.h>
 #include<time.h>
+#include<stdio.h>
 
-pid_t* pids;
-int runned_process;
-
-void advanced_fork(int from, int to)
+const int BRANCH_COUNT = 9;
+const int PROC_COUNT = 10;
+const int READABLE = 0;
+const int WRITEABLE = 1;
+typedef struct
 {
-    pid_t instance_id = *(pids + from);
-    pid_t unknown_id = fork();
-    if (unknown_id != instance_id)
+    pid_t id;
+    int num;
+    int size;
+    branch* branches;
+} work;
+
+work personal_work(int num, const branch* graph)
+{
+    work result;
+    int count = 0;
+    for (int i = 0; i < BRANCH_COUNT; ++i)
     {
-        *(pids + to) = getpid();
-    } 
+        if ((graph + i)->from == num)
+        {
+            ++count;
+        }
+    }
+    result.branches = (branch*) malloc(count * sizeof(branch));
+    result.size = count;
+    result.num = num;
+    return result;
 }
 
-void init(void)
+void do_parent(int* pipes, pid_t child_id, int child_num, const branch* graph)
 {
-    const size_t length = 10;
-    pids = (pid_t*) malloc(10 * sizeof(pid_t));
-    *(pids + 0) = getpid();
-    for (size_t i = 1; i < length; i++)
+    //close read pipe
+    close(*(pipes + READABLE));
+    pid_t* buffer_id = (pid_t*) malloc(sizeof(pid_t));
+    *(buffer_id) = child_id;
+    int* buffer_num = (int*) malloc(sizeof(int));
+    *(buffer_num) = child_num;
+    *(buffer_num + 1) = BRANCH_COUNT;
+    if (write(*(pipes + WRITEABLE), buffer_id, sizeof(pid_t)) + 
+        write(*(pipes + WRITEABLE), buffer_num, sizeof(int) * 2) +
+        write(*(pipes + WRITEABLE), graph, sizeof(branch) * BRANCH_COUNT) != 
+        sizeof(pid_t) + sizeof(int) * 2 + sizeof(branch) * BRANCH_COUNT) 
     {
-        *(pids + i) = 0;
-        ++runned_process;
+        perror("Error while writing information");
     }
+    //close write pipe
+    close(*(pipes + WRITEABLE));
+    free(buffer_id);
+    free(buffer_num);
 }
 
-void simple_mode_run(void)
+void do_child(int* pipes) 
 {
-    init();
-    const run_process* runs = get_process_graph();
-    const size_t length = 9;
-    for (size_t i = 0; i < length; i++)
+    //close write pipe
+    close(*(pipes + WRITEABLE));
+    pid_t* buffer_id = (pid_t*) malloc(sizeof(pid_t));
+    int* buffer_num = (int*) malloc(sizeof(int));
+    if (read(*(pipes + READABLE), buffer_id, sizeof(pid_t)) + 
+        read(*(pipes + READABLE), buffer_num, sizeof(int)) != 
+        sizeof(pid_t) + sizeof(int)) 
     {
-        advanced_fork((runs + i)->from, (runs + i)->to);
+        perror("Error while reading information");
     }
-    srand(time(NULL));
-    int output_number = rand() % 10;
-    if (getpid() == *(pids + output_number))
+    pid_t child_id = *(buffer_id + 0);
+    int child_num = *(buffer_num + 0);
+    int branch_count = *(buffer_num + 1);
+    branch* buffer_branch = (branch*) malloc(sizeof(branch) * branch_count);
+    if (read(*(pipes + READABLE), buffer_branch, sizeof(branch) * branch_count) != 
+        branch_count * sizeof(branch_count)) 
     {
-        printf("Number of runned processes is %d", runned_process);
+        perror("Error while reading information");
     }
+    free(buffer_id);
+    free(buffer_num);
+    work child_work = personal_work(child_num, buffer_branch);
+    child_work.id = child_id;
+}
+/*
+ *@executor must have all initialized fields
+ */
+void unlimited_fork_works(work executor)
+{   
+    pid_t child_id;
+    int* pipes = (int*) malloc(2 * sizeof(int));
+    for (int i = 0; i < executor.size; ++i)
+    {
+        if (getpid() == executor.id)
+        {
+            if (pipe(pipes) == -1)
+            {
+                perror("Error in creating pipes");
+            }
+            
+            child_id = fork();
+            switch (child_id)
+            {
+                case -1: perror("Error in forking");
+                case 0: do_child(pipes);
+            default:break;
+                do_parent(pipes, child_id, (executor.branches + i)->to, executor.branches);
+            }
+        }
+    }
+    free(pipes);
+}
+
+void run(void) 
+{
+    const branch* graph = get_process_graph();
+    
 }
 
 int main(void) 
 {
-    simple_mode_run();
+    run();
     return 0;
 }
