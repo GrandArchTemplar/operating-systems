@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.0.0)
 project(operating-systems VERSION 0.0.0)
 
+include(CMakeToolsHelpers OPTIONAL)
 
 add_executable(cp src/task2/main.c)
 add_library(copy src/task2/copy.c)

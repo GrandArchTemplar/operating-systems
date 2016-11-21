@@ -11,7 +11,7 @@ void set_edge(branch* list, const int number, const int from, const int to)
 const branch* get_process_graph(void)
 {
     branch* list = (branch*) malloc(9 * sizeof(branch));
-    set_edge(list, 0, 0, 1  );
+    set_edge(list, 0, 0, 1);
     set_edge(list, 1, 1, 2);
     set_edge(list, 2, 1, 3);
     set_edge(list, 3, 2, 4);
