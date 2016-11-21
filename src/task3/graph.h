@@ -1,4 +1,4 @@
-typedef struct 
+typedef struct
 {
     int from;
     int to;
@@ -7,4 +7,4 @@ typedef struct
 /*
  * return process graph as edge list 
  */
-const branch* get_process_graph(void);
+const branch *get_process_graph(void);
