@@ -96,6 +96,7 @@ void do_child(int *pipes)
     child_work.id = child_id;
     free(buffer_branch);
     close(pipes[0]);
+    printf("I'm god %d %d\n", child_id, child_num);
     unlimited_fork_works(child_work);
 }
 /*

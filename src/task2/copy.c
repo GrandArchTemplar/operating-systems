@@ -23,10 +23,11 @@ int file_copy(const char *instance_path, const char *copy_path)
         const int BUFFER_SIZE = 16384;
         char *buffer = (char*) malloc(BUFFER_SIZE);
         int r = -1;
+        int t;
         while(r)
         {
             r = read(input, buffer, BUFFER_SIZE);
-            write(output, buffer, r);
+            t = write(output, buffer, r);
         }
         free(buffer);
         return 0;
