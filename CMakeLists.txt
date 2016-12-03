@@ -10,6 +10,7 @@ add_subdirectory(src/lib)
 
 add_executable(cp src/task2/main.c)
 add_executable(runner src/task3/main.c)
+add_executable(MP-matrix-summator src/task4/main.c)
 
 target_link_libraries(cp copy)
 target_link_libraries(runner graph)

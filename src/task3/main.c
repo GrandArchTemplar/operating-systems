@@ -66,7 +66,9 @@ void do_parent(int *pipes, pid_t child_id, int child_num, const branch *graph)
     }
     close(pipes[1]);
     free(buffer_id);
+    buffer_id = NULL;
     free(buffer_num);
+    buffer_num = NULL;
 }
 
 void unlimited_fork_works(work executor);
@@ -96,12 +98,16 @@ void do_child(int *pipes)
     work child_work = personal_work(child_num, buffer_branch);
     child_work.id = child_id;
     free(buffer_branch);
+    buffer_branch = NULL;
     free(buffer_id);
+    buffer_id = NULL;
     free(buffer_num);
+    buffer_num = NULL;
     close(*(pipes + READABLE));
     printf("I'm god %d %d\n", child_id, child_num);
     unlimited_fork_works(child_work);
     free(child_work.branches);
+    child_work.branches = NULL;
 }
 /*
  *@executor must have all initialized fields
@@ -137,6 +143,7 @@ void unlimited_fork_works(work executor)
         }
     }
     free(pipes);
+    pipes = NULL;
 }
 
 void run(void)

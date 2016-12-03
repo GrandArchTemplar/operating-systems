@@ -4,3 +4,4 @@ project(lib)
 
 add_library(graph graph.c)
 add_library(copy copy.c)
+add_library(matrix matrix.c)
