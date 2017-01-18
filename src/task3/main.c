@@ -1,4 +1,4 @@
-#include "graph.h"
+﻿#include "graph.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/types.h>
@@ -14,38 +14,6 @@ const int WRITEABLE = 1;
 const branch *GRAPH;
 
 int d1, d2 = 0;
-
-typedef struct
-{
-    pid_t id;
-    int num;
-    int size;
-    branch *branches;
-} work;
-
-work personal_work(int num, const branch *graph)
-{
-    work result;
-    int count = 0;
-    for (int i = 0; i < BRANCH_COUNT; ++i)
-    {
-        count += ((graph + i)->from == num) ? 1 : 0;
-    }
-    result.branches = (branch *)malloc(count * sizeof(branch));
-    int j = 0;
-    const branch *t = graph;
-    for (int i = 0; i < BRANCH_COUNT; ++i)
-    {
-        if (t->from == num)
-        {
-            *(result.branches + j++) = *t;
-        }
-        t++;
-    }
-    result.size = count;
-    result.num = num;
-    return result;
-}
 
 void do_parent(int *pipes, pid_t child_id, int child_num, const branch *graph)
 {

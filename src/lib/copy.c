@@ -1,8 +1,9 @@
-#include<fcntl.h>
+﻿#include<fcntl.h>
 #include<sys/stat.h>
 #include<stdio.h>
 #include<unistd.h>
 #include<stdlib.h>
+#include"copy.h"
 /*
  * This is C-analog of CP (Unix term command) with cutted functional(with time functional'll be added)
  */
