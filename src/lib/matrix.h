@@ -1,4 +1,4 @@
-typedef struct
+﻿typedef struct
 {
     int *data;
     int column;
@@ -8,3 +8,5 @@ typedef struct
 matrix create_matrix(int column, int row);
 
 matrix matrix_sum(matrix a, matrix b);
+
+void destroy(matrix a);
